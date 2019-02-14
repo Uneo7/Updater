@@ -52,7 +52,7 @@ func get(dir string, file string, hash string, queue *sync.WaitGroup) {
 	var download Downloader
 
 	download.Hash = hash
-	download.File = strings.Replace(file, "/update", "", 1)
+	download.File = file
 	download.Root = dir
 
 	if !download.verify() {
