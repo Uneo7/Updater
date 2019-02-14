@@ -14,7 +14,7 @@ import (
 type Downloader struct {
 	Root string
 	File string
-	Hash string
+	Hash uint32
 }
 
 func (downloader Downloader) createPath(dirPath string) {
@@ -72,5 +72,5 @@ func (downloader Downloader) verify() bool {
 	}
 
 	x := xxHash32.Checksum(buffer, 0)
-	return fmt.Sprintf("%x", x) == downloader.Hash
+	return x == downloader.Hash
 }

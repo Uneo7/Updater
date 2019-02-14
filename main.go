@@ -14,7 +14,7 @@ import (
 type Files []File
 type File struct {
 	Name string `json:"path"`
-	Sum  string `json:"sum"`
+	Sum  uint32 `json:"sum"`
 }
 
 type Config struct {
@@ -46,7 +46,7 @@ func requestFiles(url string) (Files, error) {
 	return files, nil
 }
 
-func get(dir string, file string, hash string, queue *sync.WaitGroup) {
+func get(dir string, file string, hash uint32, queue *sync.WaitGroup) {
 
 	defer queue.Done()
 	var download Downloader
