@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 )
@@ -16,10 +17,13 @@ type File struct {
 	Sum  string `json:"sum"`
 }
 
-var index = "https://update.beyond-horizon.fr/files.json"
-var root = "https://update.beyond-horizon.fr/update"
+type Config struct {
+	Index string
+	Root  string
+	Game  string
+}
 
-var downloadsQueue = &sync.WaitGroup{}
+var config Config
 
 func requestFiles(url string) (Files, error) {
 
@@ -56,26 +60,41 @@ func get(dir string, file string, hash string, queue *sync.WaitGroup) {
 	}
 }
 
-func main() {
+func parseConf() {
 
-	dir := flag.String("gamedir", "", "--gamedir Dossier du jeu")
-	flag.Parse()
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Updater parameters:\n")
 
-	fmt.Println(*dir)
-	if *dir == "" {
-		panic("Gamedir required")
+		flag.PrintDefaults()
 	}
 
-	files, err := requestFiles(index)
+	dir := flag.String("g", "", "Game directory path (absolute)")
+	root := flag.String("r", "", "Files location URL")
+	index := flag.String("i", "", "Files index")
+
+	flag.Parse()
+
+	config.Game = *dir
+	config.Index = *index
+	config.Root = strings.TrimRight(*root, "/")
+}
+
+func main() {
+
+	parseConf()
+
+	files, err := requestFiles(config.Index)
 	if err != nil {
 		panic(err.Error())
 	}
 
 	fmt.Println("Files: ", len(files))
 
+	downloadsQueue := &sync.WaitGroup{}
+
 	for i := range files {
 		downloadsQueue.Add(1)
-		go get(*dir, files[i].Name, files[i].Sum, downloadsQueue)
+		go get(config.Game, files[i].Name, files[i].Sum, downloadsQueue)
 	}
 
 	downloadsQueue.Wait()

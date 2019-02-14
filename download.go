@@ -27,7 +27,7 @@ func (downloader Downloader) createPath(dirPath string) {
 func (downloader Downloader) download() bool {
 
 	var url strings.Builder
-	url.WriteString(root)
+	url.WriteString(config.Root)
 	url.WriteString(downloader.File)
 
 	file := path.Join(downloader.Root, downloader.File)
