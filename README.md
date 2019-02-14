@@ -4,4 +4,7 @@
 `go build`
 
 ### Run
-`Updater.exe --gamedir C:\...`
+The updater requires 3 parameters:
+* `-g` The game directory
+* `-r` The files location URL
+* `-i` The files index

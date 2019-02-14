@@ -64,7 +64,6 @@ func parseConf() {
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Updater parameters:\n")
-
 		flag.PrintDefaults()
 	}
 
